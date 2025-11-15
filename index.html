@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yes or No Buttons</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .container {
+      text-align: center;
+      background: #0f3460;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      border: 2px solid #e94560;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #e94560;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    button {
+      padding: 12px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .yes {
+      background-color: #e94560;
+      color: white;
+      font-weight: bold;
+    }
+
+    .yes:hover {
+      background-color: #ff5a7a;
+      transform: scale(1.05);
+    }
+
+    .no-slot {
+      width: 94px;
+      height: 40px;
+      border-radius: 5px;
+      visibility: hidden;
+    }
+
+    .no-real {
+      background-color: #e94560;
+      color: white;
+      position: absolute;
+      transition: left 0.05s, top 0.05s; /* faster transition */
+      font-weight: bold;
+      pointer-events: none; /* makes it unclickable */
+    }
+
+    .no-real:hover {
+      background-color: #ff5a7a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Miss mo ba ko?</h1>
+
+    <div class="button-row" id="row">
+      <button class="yes" onclick="alert('Yieee miss nya ko')">Yes</button>
+      <div class="no-slot" id="noSlot"></div>
+    </div>
+  </div>
+
+  <button class="no-real" id="noBtn">No</button>
+
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const noSlot = document.getElementById('noSlot');
+
+    function positionNoOverSlot() {
+      const slotRect = noSlot.getBoundingClientRect();
+      noBtn.style.left = slotRect.left + 'px';
+      noBtn.style.top = slotRect.top + 'px';
+    }
+
+    window.addEventListener('load', positionNoOverSlot);
+    window.addEventListener('resize', positionNoOverSlot);
+
+    function dodge(x, y) {
+      const rect = noBtn.getBoundingClientRect();
+      const inside =
+        x >= rect.left && x <= rect.right &&
+        y >= rect.top && y <= rect.bottom;
+
+      if (inside) {
+        const distanceX = x - (rect.left + rect.width / 2);
+        const distanceY = y - (rect.top + rect.height / 2);
+
+        // Stronger push so it escapes instantly
+        let newLeft = noBtn.offsetLeft - distanceX * 5;
+        let newTop = noBtn.offsetTop - distanceY * 5;
+
+        const margin = 60; // extra margin from edges
+        if (newLeft < margin || newLeft > window.innerWidth - noBtn.offsetWidth - margin) {
+          newLeft = window.innerWidth / 2; // bounce back to center
+        }
+        if (newTop < margin || newTop > window.innerHeight - noBtn.offsetHeight - margin) {
+          newTop = window.innerHeight / 2; // bounce back to center
+        }
+
+        noBtn.style.left = newLeft + 'px';
+        noBtn.style.top = newTop + 'px';
+      }
+    }
+
+    // Desktop mouse
+    document.addEventListener('mousemove', (e) => {
+      dodge(e.clientX, e.clientY);
+    });
+
+    // Mobile touch
+    document.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      dodge(touch.clientX, touch.clientY);
+    });
+  </script>
+</body>
+</html>
