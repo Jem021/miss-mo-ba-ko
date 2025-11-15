@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Yes or No Buttons</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+    }
+
+    .container {
+      text-align: center;
+      background: #0f3460;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+      border: 2px solid #e94560;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      color: #e94560;
+    }
+
+    .button-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      position: relative;
+    }
+
+    button {
+      padding: 12px 30px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .yes {
+      background-color: #e94560;
+      color: white;
+      font-weight: bold;
+    }
+
+    .yes:hover {
+      background-color: #ff5a7a;
+      transform: scale(1.05);
+    }
+
+    .no-slot {
+      width: 94px;
+      height: 40px;
+      border-radius: 5px;
+      visibility: hidden;
+    }
+
+    .no-real {
+      background-color: #e94560;
+      color: white;
+      position: absolute;
+      transition: left 0.1s, top 0.1s;
+      font-weight: bold;
+    }
+
+    .no-real:hover {
+      background-color: #ff5a7a;
+    }
+  </style>
+</head>
+<body>
+  <!-- Changed the question here -->
+  <div class="container">
+    <h1>Miss mo ba ko?</h1>
+
+    <div class="button-row" id="row">
+      <button class="yes" onclick="alert('Yieee miss nya ko')">Yes</button>
+      <div class="no-slot" id="noSlot"></div>
+    </div>
+  </div>
+
+  <button class="no-real" id="noBtn" onclick="alert('You clicked NO!')">No</button>
+
+  <script>
+    const noBtn = document.getElementById('noBtn');
+    const noSlot = document.getElementById('noSlot');
+
+    function positionNoOverSlot() {
+      const slotRect = noSlot.getBoundingClientRect();
+      noBtn.style.left = slotRect.left + 'px';
+      noBtn.style.top = slotRect.top + 'px';
+    }
+
+    window.addEventListener('load', positionNoOverSlot);
+    window.addEventListener('resize', positionNoOverSlot);
+
+    document.addEventListener('mousemove', (e) => {
+      const rect = noBtn.getBoundingClientRect();
+      const distanceX = e.clientX - (rect.left + rect.width / 2);
+      const distanceY = e.clientY - (rect.top + rect.height / 2);
+      const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+      if (distance < 100) {
+        const offsetX = -distanceX / 2;
+        const offsetY = -distanceY / 2;
+
+        let newLeft = noBtn.offsetLeft + offsetX;
+        let newTop = noBtn.offsetTop + offsetY;
+
+        // Add safe margin so button never touches edges
+        const margin = 20;
+        newLeft = Math.max(margin, Math.min(window.innerWidth - noBtn.offsetWidth - margin, newLeft));
+        newTop = Math.max(margin, Math.min(window.innerHeight - noBtn.offsetHeight - margin, newTop));
+
+        noBtn.style.left = newLeft + 'px';
+        noBtn.style.top = newTop + 'px';
+      }
+    });
+  </script>
+</body>
+</html>
